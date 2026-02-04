@@ -1,10 +1,16 @@
 package com.crzsc.plugin.test
 
+import com.crzsc.plugin.utils.DartClassGenerator
 import com.crzsc.plugin.utils.AssetNode
 import com.crzsc.plugin.utils.MediaType
-import com.crzsc.plugin.utils.DartClassGenerator
+import com.crzsc.plugin.utils.ModulePubSpecConfig
+import com.crzsc.plugin.utils.SemanticVersion
+import com.intellij.openapi.module.Module
+import io.flutter.pub.PubRoot
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.junit.Assert.*
+import org.mockito.Mockito.mock
 
 /**
  * 测试 DartClassGenerator 生成的代码结构
@@ -12,7 +18,7 @@ import org.junit.Assert.*
 class DartClassGeneratorTest {
     
     @Test
-    fun testNoD uplicateClasses() {
+    fun testNoDuplicateClasses() {
         // 构建测试资源树
         val root = AssetNode("Assets", "", MediaType.DIRECTORY, null)
         val assetsDir = AssetNode("assets", "assets", MediaType.DIRECTORY, null)
@@ -34,7 +40,13 @@ class DartClassGeneratorTest {
         
         // 生成代码
         val config = createMockConfig()
-        val generator = DartClassGenerator(root, config, hasSvg = true, hasLottie = true)
+        val generator = DartClassGenerator(
+            root,
+            config,
+            hasSvg = true,
+            hasLottie = true,
+            flutterVersion = SemanticVersion(3, 0, 0)
+        )
         val generatedCode = generator.generate()
         
         // 验证:检查类定义数量
@@ -53,16 +65,31 @@ class DartClassGeneratorTest {
         assertTrue("Root class should contain image field", generatedCode.contains("static const \$AssetsImageGen image"))
         assertTrue("Root class should contain svg field", generatedCode.contains("static const \$AssetsSvgGen svg"))
         assertTrue("Root class should contain lottie field", generatedCode.contains("static const \$AssetsLottieGen lottie"))
+        assertTrue("Generated code should contain root class name", generatedCode.contains("class Assets"))
+        assertTrue("Generated code should include Lottie import", generatedCode.contains("package:lottie/lottie.dart"))
+        assertTrue("Generated code should include SVG import", generatedCode.contains("package:flutter_svg/flutter_svg.dart"))
         
         println("Generated code structure is correct!")
         println(generatedCode)
     }
     
-    private fun createMockConfig(): Any {
-        // 创建模拟配置对象
-        // 这里需要根据实际的 ModulePubSpecConfig 结构来实现
-        return object {
-            fun getLeadingWithPackageNameIfChecked() = ""
-        }
+    private fun createMockConfig(): ModulePubSpecConfig {
+        val module = mock(Module::class.java)
+        val pubRoot = mock(PubRoot::class.java)
+        val map = mapOf(
+            "name" to "test_app",
+            "flutter_assets_generator" to mapOf(
+                "class_name" to "Assets",
+                "style" to "robust",
+                "leading_with_package_name" to false
+            )
+        )
+        return ModulePubSpecConfig(
+            module = module,
+            pubRoot = pubRoot,
+            assetVFiles = emptyList(),
+            map = map,
+            isFlutterModule = false
+        )
     }
 }

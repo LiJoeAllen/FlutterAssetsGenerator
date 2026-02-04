@@ -127,7 +127,7 @@ class FileGenerator(private val project: Project) {
                             LOG.warn("Failed to reformat file: ${dartFile.name}", e)
                         }
 
-                        showNotify("${config.module.name} : assets generate succeed")
+                        showNotify("${config.module.name} : assets generation succeeded")
                     } else {
                         showNotify("${config.module.name} : nothing changed")
                     }

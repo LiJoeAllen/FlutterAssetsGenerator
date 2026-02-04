@@ -30,7 +30,7 @@ This will automatically add the default configuration to your `pubspec.yaml`:
 
 ```yaml
 flutter_assets_generator:
-  output_dir: lib/generated/
+  output_dir: generated/
   output_filename: assets
   class_name: Assets
   auto_detection: true
@@ -42,8 +42,8 @@ flutter_assets_generator:
 
 ```yaml
 flutter_assets_generator:
-  # Sets the directory of generated files. Default: lib/generated
-  output_dir: lib/generated/
+  # Sets the directory of generated files. Default: generated/
+  output_dir: generated/
   # Sets the name for the generated file. Default: assets
   output_filename: assets
   # Sets the name for the root class. Default: Assets
@@ -134,7 +134,7 @@ flutter_assets_generator:
 
 ```yaml
 flutter_assets_generator:
-  # 生成文件的输出目录。默认: lib/generated
+  # 生成文件的输出目录。默认: generated/
   output_dir: generated/
   # 生成文件的文件名 (无后缀)。默认: assets
   output_filename: assets
