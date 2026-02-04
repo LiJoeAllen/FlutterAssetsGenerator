@@ -65,7 +65,7 @@ data class PubspecConfig(
 
                 // 读取插件配置
                 val pluginConfig = data["flutter_assets_generator"] as? Map<*, *>
-                val autoDetection = pluginConfig?.get("auto_detection") as? Boolean ?: false
+                val autoDetection = pluginConfig?.get("auto_detection") as? Boolean ?: true
                 val outputDir = pluginConfig?.get("output_dir") as? String ?: "generated"
                 val className = pluginConfig?.get("class_name") as? String ?: "Assets"
                 val outputFilename = pluginConfig?.get("output_filename") as? String ?: "assets"

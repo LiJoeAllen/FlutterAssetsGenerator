@@ -43,6 +43,37 @@ cd "$SAVED" >/dev/null
 APP_NAME="Gradle"
 APP_BASE_NAME=`basename "$0"`
 
+# Prefer a supported JDK for Gradle when the default is too new.
+# Gradle 8.5 does not support running on Java 25 (class file major version 69).
+if [ -z "${JAVA_HOME:-}" ]; then
+    for candidate in \
+        "$HOME/.local/share/mise/installs/java/21.0.2" \
+        "$HOME/.local/share/mise/installs/java/17.0.2"
+    do
+        if [ -x "$candidate/bin/java" ]; then
+            JAVA_HOME="$candidate"
+            export JAVA_HOME
+            break
+        fi
+    done
+else
+    if [ -x "$JAVA_HOME/bin/java" ]; then
+        java_major=$("$JAVA_HOME/bin/java" -version 2>&1 | awk -F\" '/version/ {print $2}' | awk -F. '{print $1}')
+        if [ "$java_major" -ge 25 ]; then
+            for candidate in \
+                "$HOME/.local/share/mise/installs/java/21.0.2" \
+                "$HOME/.local/share/mise/installs/java/17.0.2"
+            do
+                if [ -x "$candidate/bin/java" ]; then
+                    JAVA_HOME="$candidate"
+                    export JAVA_HOME
+                    break
+                fi
+            done
+        fi
+    fi
+fi
+
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
